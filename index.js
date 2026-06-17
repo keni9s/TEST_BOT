@@ -1,10 +1,10 @@
 const { Client, GatewayIntentBits } = require('discord.js');
-// SỬA TẠI ĐÂY: Đổi tên Class được import thành GoogleGenAI đúng chuẩn của Google
-const { GoogleGenAI } = require('@google/generative-ai');
+// SỬA: Tên class đúng là GoogleGenerativeAI
+const { GoogleGenerativeAI } = require('@google/generative-ai');
 const express = require('express');
 require('dotenv').config();
 
-// --- 1. TẠO WEB SERVER ẢO ĐỂ GIỮ BOT LUÔN THỨC TRÊN RENDER ---
+// --- 1. WEB SERVER ẢO ---
 const app = express();
 const PORT = process.env.PORT || 3000;
 
@@ -17,11 +17,11 @@ app.listen(PORT, () => {
 });
 
 // --- 2. CẤU HÌNH GEMINI AI ---
-// SỬA TẠI ĐÂY: Sử dụng từ khóa new GoogleGenAI (chữ G viết hoa)
-const ai = new GoogleGenAI(process.env.GEMINI_API_KEY);
-const model = ai.getGenerativeModel({ model: 'gemini-1.5-flash' });
+// SỬA: Dùng GoogleGenerativeAI và getGenerativeModel đúng cách
+const genAI = new GoogleGenerativeAI(process.env.GEMINI_API_KEY);
+const model = genAI.getGenerativeModel({ model: 'gemini-1.5-flash' });
 
-// --- 3. CẤU HÌNH DISCORD BOT ---
+// --- 3. DISCORD BOT ---
 const client = new Client({
     intents: [
         GatewayIntentBits.Guilds,
