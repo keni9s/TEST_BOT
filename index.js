@@ -1,5 +1,5 @@
 const { Client, GatewayIntentBits } = require('discord.js');
-// SỬA TẠI ĐÂY: Sử dụng class GoogleGenAI viết đúng chuẩn của thư viện gốc
+// SỬA TẠI ĐÂY: Sử dụng GoogleGenAI theo chuẩn mới nhất
 const { GoogleGenAI } = require('@google/generative-ai');
 const express = require('express');
 require('dotenv').config();
@@ -17,7 +17,7 @@ app.listen(PORT, () => {
 });
 
 // --- 2. CẤU HÌNH GEMINI AI ---
-// SỬA TẠI ĐÂY: Khởi tạo bằng cách truyền trực tiếp chuỗi API Key, không bọc trong object { apiKey: ... }
+// Khởi tạo đối tượng AI bằng API Key
 const ai = new GoogleGenAI(process.env.GEMINI_API_KEY);
 const model = ai.getGenerativeModel({ model: 'gemini-1.5-flash' });
 
@@ -35,25 +35,19 @@ client.once('ready', () => {
 });
 
 client.on('messageCreate', async (message) => {
-    // Không trả lời tin nhắn của bot khác hoặc của chính nó
     if (message.author.bot) return;
-    
-    // Chỉ trả lời khi được tag (mention) trong server
     if (!message.mentions.has(client.user)) return;
 
-    // Lọc bỏ phần tag để lấy câu hỏi thực tế
     const question = message.content.replace(`<@${client.user.id}>`, '').trim();
     if (!question) return message.reply("Bạn muốn hỏi tôi điều gì nào?");
 
     try {
-        // Hiển thị trạng thái "đang gõ..." trên Discord
         await message.channel.sendTyping();
 
-        // Gửi câu hỏi sang Gemini và nhận câu trả lời văn bản
+        // Gửi nội dung câu hỏi sang Gemini
         const result = await model.generateContent(question);
         const responseText = result.response.text();
 
-        // Giới hạn ký tự tin nhắn của Discord là 2000
         if (responseText.length > 2000) {
             await message.reply(responseText.substring(0, 1990) + "...");
         } else {
