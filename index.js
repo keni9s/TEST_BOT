@@ -1,6 +1,5 @@
 const { Client, GatewayIntentBits } = require('discord.js');
-// SỬA: Tên class đúng là GoogleGenerativeAI
-const { GoogleGenerativeAI } = require('@google/generative-ai');
+const Groq = require('groq-sdk');
 const express = require('express');
 require('dotenv').config();
 
@@ -16,10 +15,8 @@ app.listen(PORT, () => {
     console.log(`Web server ảo đang chạy trên cổng ${PORT}`);
 });
 
-// --- 2. CẤU HÌNH GEMINI AI ---
-// SỬA: Dùng GoogleGenerativeAI và getGenerativeModel đúng cách
-const genAI = new GoogleGenerativeAI(process.env.GEMINI_API_KEY);
-const model = genAI.getGenerativeModel({ model: 'gemini-2.0-flash' });
+// --- 2. CẤU HÌNH GROQ AI ---
+const groq = new Groq({ apiKey: process.env.GROQ_API_KEY });
 
 // --- 3. DISCORD BOT ---
 const client = new Client({
@@ -44,8 +41,11 @@ client.on('messageCreate', async (message) => {
     try {
         await message.channel.sendTyping();
 
-        const result = await model.generateContent(question);
-        const responseText = result.response.text();
+        const result = await groq.chat.completions.create({
+            messages: [{ role: 'user', content: question }],
+            model: 'llama-3.3-70b-versatile',
+        });
+        const responseText = result.choices[0].message.content;
 
         if (responseText.length > 2000) {
             await message.reply(responseText.substring(0, 1990) + "...");
@@ -54,7 +54,11 @@ client.on('messageCreate', async (message) => {
         }
     } catch (error) {
         console.error("Lỗi hệ thống:", error);
-        await message.reply("Hình như có lỗi kết nối với AI rồi, thử lại sau nhé!");
+        if (error.status === 429) {
+            await message.reply("⏳ Bot đang bị giới hạn requests, thử lại sau nhé!");
+        } else {
+            await message.reply("❌ Có lỗi kết nối với AI, thử lại sau nhé!");
+        }
     }
 });
 
