@@ -19,7 +19,7 @@ app.listen(PORT, () => {
 // --- 2. CẤU HÌNH GEMINI AI ---
 // SỬA: Dùng GoogleGenerativeAI và getGenerativeModel đúng cách
 const genAI = new GoogleGenerativeAI(process.env.GEMINI_API_KEY);
-const model = genAI.getGenerativeModel({ model: 'gemini-1.5-flash' });
+const model = genAI.getGenerativeModel({ model: 'gemini-2.0-flash' });
 
 // --- 3. DISCORD BOT ---
 const client = new Client({
