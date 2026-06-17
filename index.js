@@ -1,4 +1,5 @@
 const { Client, GatewayIntentBits } = require('discord.js');
+// SỬA TẠI ĐÂY: Sử dụng class GoogleGenAI viết đúng chuẩn của thư viện gốc
 const { GoogleGenAI } = require('@google/generative-ai');
 const express = require('express');
 require('dotenv').config();
@@ -16,7 +17,8 @@ app.listen(PORT, () => {
 });
 
 // --- 2. CẤU HÌNH GEMINI AI ---
-const ai = new GoogleGenAI({ apiKey: process.env.GEMINI_API_KEY });
+// SỬA TẠI ĐÂY: Khởi tạo bằng cách truyền trực tiếp chuỗi API Key, không bọc trong object { apiKey: ... }
+const ai = new GoogleGenAI(process.env.GEMINI_API_KEY);
 const model = ai.getGenerativeModel({ model: 'gemini-1.5-flash' });
 
 // --- 3. CẤU HÌNH DISCORD BOT ---
