@@ -1,5 +1,5 @@
 const { Client, GatewayIntentBits } = require('discord.js');
-// SỬA TẠI ĐÂY: Đổi tên biến nhận vào thành GoogleGenAI để đúng với cú pháp khởi tạo bên dưới
+// SỬA TẠI ĐÂY: Đổi tên Class được import thành GoogleGenAI đúng chuẩn của Google
 const { GoogleGenAI } = require('@google/generative-ai');
 const express = require('express');
 require('dotenv').config();
@@ -17,7 +17,7 @@ app.listen(PORT, () => {
 });
 
 // --- 2. CẤU HÌNH GEMINI AI ---
-// Khởi tạo đối tượng bằng từ khóa new GoogleGenAI chuẩn xác
+// SỬA TẠI ĐÂY: Sử dụng từ khóa new GoogleGenAI (chữ G viết hoa)
 const ai = new GoogleGenAI(process.env.GEMINI_API_KEY);
 const model = ai.getGenerativeModel({ model: 'gemini-1.5-flash' });
 
@@ -44,7 +44,6 @@ client.on('messageCreate', async (message) => {
     try {
         await message.channel.sendTyping();
 
-        // Gửi nội dung câu hỏi sang Gemini
         const result = await model.generateContent(question);
         const responseText = result.response.text();
 
