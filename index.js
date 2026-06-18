@@ -1,4 +1,4 @@
-const { Client, GatewayIntentBits } = require('discord.js');
+const { Client, GatewayIntentBits, REST, Routes } = require('discord.js');
 const Groq = require('groq-sdk');
 const express = require('express');
 require('dotenv').config();
@@ -27,8 +27,20 @@ const client = new Client({
     ]
 });
 
-client.once('ready', () => {
+// Sự kiện khi bot online - Tích hợp tự động xóa lệnh gạch chéo cũ
+client.once('ready', async () => {
     console.log(`Bot đã online với tên: ${client.user.tag}`);
+
+    // Tiến hành xóa toàn bộ lệnh gạch chéo cũ
+    try {
+        console.log('Đang dọn dẹp các lệnh gạch chéo cũ...');
+        const rest = new REST({ version: '10' }).setToken(process.env.DISCORD_TOKEN);
+        
+        await rest.put(Routes.applicationCommands(client.user.id), { body: [] });
+        console.log('✅ Đã xóa sạch toàn bộ lệnh gạch chéo thành công!');
+    } catch (error) {
+        console.error('❌ Lỗi khi dọn dẹp lệnh gạch chéo:', error);
+    }
 });
 
 client.on('messageCreate', async (message) => {
@@ -41,11 +53,25 @@ client.on('messageCreate', async (message) => {
     try {
         await message.channel.sendTyping();
 
+        // Ép AI tuân thủ luật trả lời tối đa 2 dòng bằng system prompt
         const result = await groq.chat.completions.create({
-            messages: [{ role: 'user', content: question }],
+            messages: [
+                { 
+                    role: 'system', 
+                    content: 'Bạn là Vance. Bạn phải luôn trả lời cực kỳ ngắn gọn, súc tích và TUYỆT ĐỐI KHÔNG ĐƯỢC VƯỢT QUÁ 2 DÒNG.' 
+                },
+                { role: 'user', content: question }
+            ],
             model: 'llama-3.3-70b-versatile',
         });
-        const responseText = result.choices[0].message.content;
+        
+        let responseText = result.choices[0].message.content;
+
+        // Cắt bớt phần thừa nếu AI cố tình trả lời dài hơn 2 dòng dựa trên dấu xuống dòng (\n)
+        const lines = responseText.split('\n').filter(line => line.trim() !== '');
+        if (lines.length > 2) {
+            responseText = lines.slice(0, 2).join('\n');
+        }
 
         if (responseText.length > 2000) {
             await message.reply(responseText.substring(0, 1990) + "...");
