@@ -53,17 +53,18 @@ client.on('messageCreate', async (message) => {
     try {
         await message.channel.sendTyping();
 
-        // Ép AI tuân thủ luật trả lời tối đa 2 dòng bằng system prompt
-        const result = await groq.chat.completions.create({
-            messages: [
-                { 
-                    role: 'system', 
-                    content: 'Bạn là Vance. Bạn phải luôn trả lời cực kỳ ngắn gọn, súc tích và TUYỆT ĐỐI KHÔNG ĐƯỢC VƯỢT QUÁ 2 DÒNG.' 
-                },
-                { role: 'user', content: question }
-            ],
-            model: 'llama-3.3-70b-versatile',
-        });
+
+
+    const result = await groq.chat.completions.create({
+    messages: [
+        { 
+            role: 'system', 
+            content: 'Bạn là Vance. Bạn phải LUÔN TRẢ LỜI BẰNG CHÍNH NGÔN NGỮ mà người dùng đang hỏi (hỏi tiếng nào trả lời tiếng đó), cực kỳ ngắn gọn, súc tích và TUYỆT ĐỐI KHÔNG ĐƯỢC VƯỢT QUÁ 2 DÒNG.' 
+        },
+        { role: 'user', content: question }
+    ],
+    model: 'llama-3.3-70b-versatile',
+});
         
         let responseText = result.choices[0].message.content;
 
