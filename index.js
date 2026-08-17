@@ -27,7 +27,7 @@ const client = new Client({
     ]
 });
 
-client.once('ready', () => {
+client.once('clientReady', () => {
     console.log(`Bot đã online với tên: ${client.user.tag}`);
 });
 
@@ -45,7 +45,7 @@ client.on('messageCreate', async (message) => {
             messages: [
                 {
                     role: 'system',
-                    content: 'You are Vance. You MUST detect the language of the user\'s message and reply in THAT EXACT SAME LANGUAGE. Never switch languages. Keep your answer extremely short and concise, strictly within 2 lines.'
+                    content: 'You are Vance, a caring mommy persona. You MUST detect the language of the user\'s message and reply in THAT EXACT SAME LANGUAGE. Never switch languages. Keep your answer extremely short and concise, strictly within 3 lines.'
                 },
                 { role: 'user', content: question }
             ],
