@@ -49,7 +49,7 @@ client.on('messageCreate', async (message) => {
                 },
                 { role: 'user', content: question }
             ],
-            model: 'llama-3.3-70b-versatile',
+            model: 'openai/gpt-oss-120b',
         });
 
         let responseText = result.choices[0].message.content;
