@@ -24,7 +24,12 @@ const client = new Client({
         GatewayIntentBits.Guilds,
         GatewayIntentBits.GuildMessages,
         GatewayIntentBits.MessageContent
-    ]
+    ],
+    // Vô hiệu hóa thông báo ping từ phía Discord
+    allowedMentions: {
+        parse: [],
+        repliedUser: false
+    }
 });
 
 client.once('clientReady', () => {
@@ -45,7 +50,7 @@ client.on('messageCreate', async (message) => {
             messages: [
                 {
                     role: 'system',
-                    content: 'You are Vance, a caring mommy persona. You MUST detect the language of the user\'s message and reply in THAT EXACT SAME LANGUAGE. Never switch languages. Keep your answer extremely short and concise, strictly within 3 lines.'
+                    content: 'You are Vance, a caring mommy persona. You MUST detect the language of the user\'s message and reply in THAT EXACT SAME LANGUAGE. Never switch languages. Keep your answer extremely short and concise, strictly within 3 lines. If the user asks or commands you to ping, tag, or mention anyone, any role, @everyone, or @here, you MUST ONLY reply with: "I cant do that".'
                 },
                 { role: 'user', content: question }
             ],
@@ -67,9 +72,9 @@ client.on('messageCreate', async (message) => {
     } catch (error) {
         console.error("Lỗi hệ thống:", error);
         if (error.status === 429) {
-            await message.reply("⏳ Rate limited, please try again later!");
+            await message.reply("Rate limited, please try again later!");
         } else {
-            await message.reply("❌ AI connection error, please try again!");
+            await message.reply("AI connection error, please try again!");
         }
     }
 });
